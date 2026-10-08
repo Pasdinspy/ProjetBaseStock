@@ -4,6 +4,17 @@
 
 
 -- ----------------------------
+-- Table: role
+-- ----------------------------
+CREATE TABLE role (
+  id_role INT NOT NULL AUTO_INCREMENT,
+  libelle VARCHAR(50) NOT NULL,
+  CONSTRAINT role_PK PRIMARY KEY (id_role),
+  CONSTRAINT libelle_UNQ UNIQUE (libelle)
+)ENGINE=InnoDB;
+
+
+-- ----------------------------
 -- Table: categorie
 -- ----------------------------
 CREATE TABLE categorie (
@@ -15,17 +26,13 @@ CREATE TABLE categorie (
 
 
 -- ----------------------------
--- Table: utilisateur
+-- Table: statut
 -- ----------------------------
-CREATE TABLE utilisateur (
-  id_utilisateur INT NOT NULL AUTO_INCREMENT,
-  nom VARCHAR(50) NOT NULL,
-  prenom VARCHAR(50) NOT NULL,
-  email VARCHAR(100) NOT NULL,
-  mot_de_passe VARCHAR(255) NOT NULL,
-  role ENUM('utilisateur','admin') NOT NULL DEFAULT 'UTILISATEUR',
-  CONSTRAINT utilisateur_PK PRIMARY KEY (id_utilisateur),
-  CONSTRAINT email_UNQ UNIQUE (email)
+CREATE TABLE statut (
+  id_statut INT NOT NULL AUTO_INCREMENT,
+  libelle VARCHAR(50) NOT NULL,
+  CONSTRAINT statut_PK PRIMARY KEY (id_statut),
+  CONSTRAINT libelle_UNQ UNIQUE (libelle)
 )ENGINE=InnoDB;
 
 
@@ -40,6 +47,40 @@ CREATE TABLE materiel (
   id_categorie INT NOT NULL,
   CONSTRAINT materiel_PK PRIMARY KEY (id_materiel),
   CONSTRAINT materiel_id_categorie_FK FOREIGN KEY (id_categorie) REFERENCES categorie (id_categorie)
+)ENGINE=InnoDB;
+
+
+-- ----------------------------
+-- Table: utilisateur
+-- ----------------------------
+CREATE TABLE utilisateur (
+  id_utilisateur INT NOT NULL AUTO_INCREMENT,
+  nom VARCHAR(50) NOT NULL,
+  prenom VARCHAR(50) NOT NULL,
+  email VARCHAR(100) NOT NULL,
+  mot_de_passe VARCHAR(255) NOT NULL,
+  id_role INT NOT NULL,
+  CONSTRAINT utilisateur_PK PRIMARY KEY (id_utilisateur),
+  CONSTRAINT email_UNQ UNIQUE (email),
+  CONSTRAINT utilisateur_id_role_FK FOREIGN KEY (id_role) REFERENCES role (id_role)
+)ENGINE=InnoDB;
+
+
+-- ----------------------------
+-- Table: demande_emprunt
+-- ----------------------------
+CREATE TABLE demande_emprunt (
+  id_demande INT NOT NULL AUTO_INCREMENT,
+  quantite INT NOT NULL,
+  date_demande DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  date_retour_prevue DATE NOT NULL,
+  id_statut INT NOT NULL,
+  id_utilisateur INT NOT NULL,
+  id_materiel INT NOT NULL,
+  CONSTRAINT demande_emprunt_PK PRIMARY KEY (id_demande),
+  CONSTRAINT demande_emprunt_id_statut_FK FOREIGN KEY (id_statut) REFERENCES statut (id_statut),
+  CONSTRAINT demande_emprunt_id_utilisateur_FK FOREIGN KEY (id_utilisateur) REFERENCES utilisateur (id_utilisateur),
+  CONSTRAINT demande_emprunt_id_materiel_FK FOREIGN KEY (id_materiel) REFERENCES materiel (id_materiel)
 )ENGINE=InnoDB;
 
 
@@ -65,22 +106,5 @@ CREATE TABLE ligne_inventaire (
   CONSTRAINT ligne_inventaire_PK PRIMARY KEY (id_materiel, id_inventaire),
   CONSTRAINT ligne_inventaire_id_materiel_FK FOREIGN KEY (id_materiel) REFERENCES materiel (id_materiel),
   CONSTRAINT ligne_inventaire_id_inventaire_FK FOREIGN KEY (id_inventaire) REFERENCES inventaire (id_inventaire)
-)ENGINE=InnoDB;
-
-
--- ----------------------------
--- Table: demande_emprunt
--- ----------------------------
-CREATE TABLE demande_emprunt (
-  id_demande INT NOT NULL AUTO_INCREMENT,
-  quantite INT NOT NULL,
-  date_demande DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  date_retour_prevue DATE NOT NULL,
-  statut ENUM('en_attente','validee','refusee','rendue') NOT NULL DEFAULT 'EN_ATTENTE',
-  id_utilisateur INT NOT NULL,
-  id_materiel INT NOT NULL,
-  CONSTRAINT demande_emprunt_PK PRIMARY KEY (id_demande),
-  CONSTRAINT demande_emprunt_id_utilisateur_FK FOREIGN KEY (id_utilisateur) REFERENCES utilisateur (id_utilisateur),
-  CONSTRAINT demande_emprunt_id_materiel_FK FOREIGN KEY (id_materiel) REFERENCES materiel (id_materiel)
 )ENGINE=InnoDB;
 
