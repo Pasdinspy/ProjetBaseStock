@@ -34,22 +34,22 @@ CREATE TABLE statut_demande (
 
 
 -- ----------------------------
+-- Table: salle
+-- ----------------------------
+CREATE TABLE salle (
+  id_salle INT NOT NULL AUTO_INCREMENT,
+  libelle VARCHAR(60) NOT NULL,
+  CONSTRAINT salle_PK PRIMARY KEY (id_salle)
+)ENGINE=InnoDB;
+
+
+-- ----------------------------
 -- Table: etat
 -- ----------------------------
 CREATE TABLE etat (
   id_etat INT NOT NULL AUTO_INCREMENT,
   libelle VARCHAR(50) NOT NULL,
   CONSTRAINT etat_PK PRIMARY KEY (id_etat)
-)ENGINE=InnoDB;
-
-
--- ----------------------------
--- Table: lieu
--- ----------------------------
-CREATE TABLE lieu (
-  id_lieu INT NOT NULL AUTO_INCREMENT,
-  libelle VARCHAR(60) NOT NULL,
-  CONSTRAINT lieu_PK PRIMARY KEY (id_lieu)
 )ENGINE=InnoDB;
 
 
@@ -64,13 +64,15 @@ CREATE TABLE materiel (
   reference VARCHAR(80),
   numero_serie VARCHAR(60),
   quantite INT NOT NULL DEFAULT 1,
+  controle_veritas TINYINT(1) NOT NULL DEFAULT FALSE,
+  date_controle DATE,
   remarque VARCHAR(255),
   id_categorie INT NOT NULL,
-  id_lieu INT,
+  id_salle INT,
   id_etat INT NOT NULL,
   CONSTRAINT materiel_PK PRIMARY KEY (id_materiel),
   CONSTRAINT materiel_id_categorie_FK FOREIGN KEY (id_categorie) REFERENCES categorie (id_categorie),
-  CONSTRAINT materiel_id_lieu_FK FOREIGN KEY (id_lieu) REFERENCES lieu (id_lieu),
+  CONSTRAINT materiel_id_salle_FK FOREIGN KEY (id_salle) REFERENCES salle (id_salle),
   CONSTRAINT materiel_id_etat_FK FOREIGN KEY (id_etat) REFERENCES etat (id_etat)
 )ENGINE=InnoDB;
 
